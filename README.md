@@ -123,13 +123,9 @@ This is an open mental health initiative. Contributions, suggestions, and feedba
 ## Disclaimer
 
 **MHEART is not a replacement for professional mental health care.** If you are experiencing a mental health crisis, please contact:
-- **National Suicide Prevention Lifeline**: 988 (US)
-- **Crisis Text Line**: Text HOME to 741741
+- **National Suicide Prevention Lifeline**
+- **Crisis Text Line**
 - **International Association for Suicide Prevention**: https://www.iasp.info/resources/Crisis_Centres/
-
-## License
-
-This project is open source. See LICENSE file for details.
 
 ---
 
