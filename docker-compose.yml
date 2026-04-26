@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # MHEART Backend API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./backend:/app/backend
+      - ./data:/app/data
+      - model_cache:/root/.cache
+    depends_on:
+      - redis
+      - ollama
+    networks:
+      - mheart-network
+    gpu: true  # NVIDIA GPU support
+
+  # Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - mheart-network
+    gpu: true  # NVIDIA GPU support
+
+  # Redis for caching and message queue
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mheart-network
+
+  # PostgreSQL for data persistence
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=mheart
+      - POSTGRES_PASSWORD=mheart_password
+      - POSTGRES_DB=mheart_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mheart-network
+
+  # MHEART Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - mheart-network
+    depends_on:
+      - api
+
+networks:
+  mheart-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_models:
+  model_cache:
